@@ -1,0 +1,201 @@
+<!DOCTYPEHTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>贪吃球</title>
+    <style type="text/css"><!------调用css样式列表------->
+    </style>
+
+</head>
+
+<body οnkeydοwn="doKeyDown(event)">
+<div align="center">
+    <canvas id="Mycanvas" width="600" height="500" style="border-top:2px solid #f00;border-bottom:2px solid green;border-left:2px solid blue;border-right:2px solid #f90;">你的浏览器不支持该功能</canvas><br>
+    <div id="msg"></div>
+    <input type="button" value="重新开始" onClick="rest()">
+    <input type="button" value="游戏说明" onClick="explain()">
+</div>
+<!-- <script src="animation.js"></script> -->
+<script type="text/JavaScript">
+    var canva=document.getElementById("Mycanvas");
+    var msg = document.getElementById("msg");
+    var context=canva.getContext("2d");
+    var img=new Image();
+    img.src = "ground.jpg";
+    img.onload = function() {
+        context.drawImage(img, 0, 0);
+    }
+
+    var i=1;
+    var j=1;
+    var animation={
+        //为该对象添加属性
+        //添加x,y方向的偏移量
+        "x":100,
+        "y":50,
+        //圆的半径
+        "radius":15,
+        //颜色
+        "color":"red",
+    }
+    var Bean={
+        "x":300,
+        "y":200,
+        "color":"blue",
+        "radius":5,
+    }
+    var Rect={
+        "x":200,
+        "y":100,
+        "color":"red",
+        "width":10,
+        "height":10,
+    }
+    function rest(){
+        animation.radius=15;
+        Draw();
+        Drawfood();
+    }
+    /*****************************************************************
+     function:draw()
+     use:首先清空画布，再调用animation对象的uodata函数，更新动画属性（在清空画布之前，先对状态进行保存;绘制完成后，及时恢复绘图状态）
+     *****************************************************************/
+    function Draw(){
+        var width =600;
+        var height = 500;
+        //清空画布
+        context.clearRect(0,0,width,height);
+
+        context.drawImage(img, 0, 0);
+        //填充颜色
+        context.fillStyle=animation.color;
+        //重新绘制
+        context.beginPath();
+        context.arc(animation.x,animation.y,animation.radius,0,Math.PI*2,true);
+        context.fill();
+    };
+    window.addEventListener("load",Draw,true);
+    function doKeyDown(event){
+        switch (event.keyCode)
+        {
+            case 37://左键头
+                go("left");
+                break;
+            case 38://上键头
+                go("up");
+                break;
+            case 39://右箭头
+                go("right");
+                break;
+            case 40://下箭头
+                go("down");
+                break;
+        }
+    }
+
+    function go(dir){
+
+        switch(dir)
+        {
+            case "up":
+                animation.y-=2;
+                Draw();
+                break;
+            case "down":
+                animation.y+=2;
+                Draw();
+                break;
+            case "left":
+                animation.x-=2;
+                Draw();
+                break;
+            case "right":
+                animation.x+=2;
+                Draw();
+                break;
+        }
+        if((animation.x-Bean.x)*(animation.x-Bean.x)+(animation.y-Bean.y)*(animation.y-Bean.y)<=(animation.radius+Bean.radius)*(animation.radius+Bean.radius))
+        {
+            i++;
+            if(i%2==0)
+            {
+                Beanrandom();
+            }
+            if(i%2!=0)
+            {
+                Beanrandom();
+            }
+            animation.radius += 5;
+            if(animation.radius>100)
+            {
+                animation.radius=100;
+            }
+            Draw();
+
+        }
+        if((animation.x-Rect.x)*(animation.x-Rect.x)+(animation.y-Rect.y)*(animation.y-Rect.y)<=(animation.radius+8)*(animation.radius+8))
+        {
+            j++;
+            if(j%2==0)
+            {
+                Rectrandom();
+            }
+            if(j%2!=0)
+            {
+                Rectrandom();
+            }
+            animation.radius += 5;
+            if(animation.radius>100)
+            {
+                animation.radius=100;
+            }
+            Draw();
+        }
+        Drawfood();
+    }
+    function Drawfood(){
+        DrawBean();
+        DrawRect();
+    }
+    function DrawBean(){
+        context.fillStyle=Bean.color;
+        context.beginPath();
+        context.arc(Bean.x,Bean.y,Bean.radius,0,Math.PI*2,true);
+        context.fill();
+    }
+    window.addEventListener("load",DrawBean,true);
+    function Beanrandom(){
+        Bean.x=Math.random();
+        Bean.x=Math.ceil(Bean.x * 600);
+        Bean.y=Math.random();
+        Bean.y=Math.ceil(Bean.y * 500);
+    }
+    <!-- alert(animation.delay); -->
+    function DrawRect(){
+        context.fillStyle=Rect.color;
+        context.beginPath();
+        context.rect(Rect.x,Rect.y,Rect.width,Rect.height);
+        context.strokeStyle="red";
+        context.lineWidth=1;
+        context.fillRect(Rect.x,Rect.y,Rect.width,Rect.height);
+    }
+    window.addEventListener("load",DrawRect,true);
+    function Rectrandom(){
+        Rect.x=Math.random();
+        Rect.x=Math.ceil(Rect.x * 600);
+        Rect.y=Math.random();
+        Rect.y=Math.ceil(Rect.y * 500);
+    }
+    var showhelp = false;
+    function explain(){
+        showhelp = !showhelp;
+        if(showhelp)
+        {
+            msg.innerHTML = "用键盘上的上、下、左、右键移动贪吃球，吃掉蓝色的小球或者红色的方块，可以让贪吃球变大，当然贪吃球不会一直变大的。";
+        }else{
+            msg.innerHTML = "小游戏：贪吃球";
+        };
+    }
+</script>
+</body>
+</html>
